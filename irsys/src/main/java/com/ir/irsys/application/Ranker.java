@@ -24,6 +24,34 @@ public class Ranker {
         }
     }
 
+    /**
+     * <h2>Calculate Cosine Similarity</h2>
+     *
+     * <p>Calculates the cosine similarity between two document vectors.</p>
+     *
+     * @param vec1 The first document vector.
+     * @param vec2 The second document vector.
+     * @return Cosine Similarity score.
+     * */
+    public double cosineSimilarity(Map<String, Integer> vec1, Map<String, Integer> vec2) {
+        double dotProduct = 0.0;
+        double euclidianNormVec1 = 0.0;
+        double euclidianNormVec2 = 0.0;
+
+        for (Map.Entry<String, Integer> entry : vec1.entrySet()) {
+            int count1 = entry.getValue();
+            euclidianNormVec1 += count1 * count1;
+            int count2 = vec2.getOrDefault(entry.getKey(), 0);
+            dotProduct += count1 * count2;
+        }
+
+        for (int count : vec2.values()) {
+            euclidianNormVec2 += count * count;
+        }
+
+        double denominator = Math.sqrt(euclidianNormVec1) * Math.sqrt(euclidianNormVec2) + 1e-10;
+        return dotProduct / denominator;
+    }
 
 
 
