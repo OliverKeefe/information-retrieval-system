@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class IRController {
-    @GetMapping("/results")
-    public String results() {
+    @GetMapping("/query")
+    public String query() {
         return "This is a test.";
     }
 
