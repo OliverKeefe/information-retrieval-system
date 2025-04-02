@@ -1,4 +1,4 @@
-package com.ir.irsys.controller;
+package com.ir.irsys.api;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
