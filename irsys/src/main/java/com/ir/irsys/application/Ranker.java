@@ -1,8 +1,12 @@
 package com.ir.irsys.application;
 
+import javax.print.Doc;
+import java.lang.annotation.Documented;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Ranker {
 
@@ -53,7 +57,20 @@ public class Ranker {
         return dotProduct / denominator;
     }
 
+    public List<DocumentScore> rankDocumentsForQuery(String query) {
+        List<String> queryTokens = bow.preprocessText(query);
 
+        Map<String, Integer> queryVector = bow.vectorizeDocument(queryTokens);
 
+        List<DocumentScore> scores = new ArrayList<>();
 
+        for (int i = 0; i < documentVectors.size(); i++) {
+            double similarity = cosineSimilarity(queryVector, documentVectors.get(i));
+            scores.add(new DocumentScore(documentIds.get(i), documentTexts.get(i), similarity));
+        }
+
+        return scores.stream()
+                .sorted(Comparator.comparingDouble(DocumentScore::getScore).reversed())
+                .collect(Collectors.toList()); // Potentially unmodifiable list, haven't decided yet.
+    }
 }
