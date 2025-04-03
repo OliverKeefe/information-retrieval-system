@@ -14,18 +14,59 @@ public class Ranker {
     private List<Map<String, Integer>> documentVectors;
     private List<String> documentIds;
     private List<String> documentTexts;
+    private Map<String, Double> idfScores;
+    private List<Map<String, Double>> tfidfDocumentVectors;
 
     public Ranker(BagOfWords bow, List<String> documentIds, List<String> documentTexts) {
         this.bow = bow;
         this.documentIds = documentIds;
         this.documentTexts = documentTexts;
         this.documentVectors = new ArrayList<>();
+        this.tfidfDocumentVectors = new ArrayList<>();
 
         for (String text : documentTexts) {
             List<String> tokens = bow.preprocessText(text);
             Map<String, Integer> vector = bow.vectorizeDocument(tokens);
             documentVectors.add(vector);
         }
+
+        computeIDFScores();
+
+        for (Map<String, Integer> docVector : documentVectors) {
+            tfidfDocumentVectors.add(computeTFIDFForDocument(docVector));
+        }
+    }
+
+    private void computeIDFScores() {
+        idfScores = new HashMap<>();
+        int totalDocuments = documentVectors.size();
+
+        Map<String, Integer> documentFrequency = new HashMap<>();
+        for (Map<String, Integer> docVector : documentVectors) {
+            for (String term : docVector.keySet()) {
+                documentFrequency.put(term, documentFrequency.getOrDefault(term, 0) + 1);
+            }
+        }
+
+        for (Map.Entry<String, Integer> entry : documentFrequency.entrySet()) {
+            String term = entry.getKey();
+            int df = entry.getValue();
+            double idf = Math.log((double) totalDocuments / (double) df);
+            idfScores.put(term, idf);
+        }
+    }
+
+    private Map<String, Double> computeTFIDFForDocument(Map<String, Integer> docVector) {
+        Map<String, Double> tfidfVector = new HashMap<>();
+
+        for (Map.Entry<String, Integer> entry : docVector.entrySet()) {
+            String term = entry.getKey();
+            int tf = entry.getValue();
+            double idf = idfScores.getOrDefault(term, 0.0);
+            tfidfVector.put(term, tf * idf);
+        }
+
+        return tfidfVector;
     }
 
     /**
