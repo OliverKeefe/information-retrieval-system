@@ -8,7 +8,6 @@ import org.bson.Document;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 /**
  * <h2>Bag-Of-Words Model.</h2>
  *
@@ -57,12 +56,21 @@ public class BagOfWords {
     public List<String> readDocuments() {
         List<String> documents = new ArrayList<>();
 
-        for (Document document : documentCollection.find()) {
-            String text = document.getString("text");
-            documents.add(text);
+        for (Document doc : documentCollection.find()) {
+            documents.add(doc.getString("text"));
         }
 
         return documents;
+    }
+
+    public List<String> readDocumentIds() {
+        List<String> ids = new ArrayList<>();
+
+        for (Document doc : documentCollection.find()) {
+            ids.add(doc.getString("filename"));
+        }
+
+        return ids;
     }
 
     /**
