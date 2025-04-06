@@ -1,8 +1,11 @@
 package com.ir.irsys.application;
 
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.Set;
 
+@Component
 public class Evaluator {
 
     public static double calculatePrecision(List<String> retrievedDocIds, Set<String> relevantDocIds, int k) {
