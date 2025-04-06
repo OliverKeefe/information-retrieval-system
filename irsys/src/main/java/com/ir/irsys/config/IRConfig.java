@@ -1,9 +1,11 @@
 package com.ir.irsys.config;
 
 import com.ir.irsys.application.BagOfWords;
+import com.ir.irsys.application.Evaluator;
 import com.ir.irsys.application.Ranker;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,9 +26,17 @@ public class IRConfig {
 
     @Bean
     public Ranker ranker(BagOfWords bow) {
-        List<String> docIds = List.of("200", "230", "247", "250", "289");
+        List<String> docIds = bow.readDocumentIds();
         List<String> texts = bow.readDocuments();
 
         return new Ranker(bow, docIds, texts);
+    }
+
+    @Bean
+    public CommandLineRunner loadCranfieldDocs(MongoClient mongoClient) {
+        return args -> {
+            CranfieldLoader loader = new CranfieldLoader(mongoClient, "cranfield_db", "documents");
+            loader.loadCranfieldDocuments("src/main/resources/cranfield");
+        };
     }
 }
