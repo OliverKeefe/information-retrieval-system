@@ -19,7 +19,6 @@ public class IRController {
 
     private final Ranker ranker;
 
-    @Autowired
     Evaluator evaluator;
 
     /**
